@@ -60,8 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Beer.sql" />
-    <Build Include="Type.sql" />
-    <Build Include="Rating.sql" />
+    <Build Include="BeerType.sql" />
+    <Build Include="BeerRating.sql" />
     <Build Include="PresentableBeer.sql" />
   </ItemGroup>
   <ItemGroup>

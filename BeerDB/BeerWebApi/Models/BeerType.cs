@@ -12,11 +12,9 @@ namespace BeerWebApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Rating
+    public partial class BeerType
     {
-        public int BeerId { get; set; }
-        public int Rating1 { get; set; }
-    
-        public virtual Beer Beer { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

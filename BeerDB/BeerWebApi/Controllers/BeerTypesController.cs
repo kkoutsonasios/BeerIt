@@ -13,44 +13,44 @@ using BeerWebApi.Models;
 
 namespace BeerWebApi.Controllers
 {
-    public class TypesController : ApiController
+    public class BeerTypesController : ApiController
     {
         private BeerDBEntities db = new BeerDBEntities();
 
-        // GET: api/Types
-        public IQueryable<Models.Type> GetTypes()
+        // GET: api/BeerTypes
+        public IQueryable<BeerType> GetBeerTypes()
         {
-            return db.Types;
+            return db.BeerTypes;
         }
 
-        // GET: api/Types/5
-        [ResponseType(typeof(Models.Type))]
-        public async Task<IHttpActionResult> GetType(int id)
+        // GET: api/BeerTypes/5
+        [ResponseType(typeof(BeerType))]
+        public async Task<IHttpActionResult> GetBeerType(int id)
         {
-            Models.Type type = await db.Types.FindAsync(id);
-            if (type == null)
+            BeerType beerType = await db.BeerTypes.FindAsync(id);
+            if (beerType == null)
             {
                 return NotFound();
             }
 
-            return Ok(type);
+            return Ok(beerType);
         }
 
-        // PUT: api/Types/5
+        // PUT: api/BeerTypes/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutType(int id, Models.Type type)
+        public async Task<IHttpActionResult> PutBeerType(int id, BeerType beerType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != type.Id)
+            if (id != beerType.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(type).State = EntityState.Modified;
+            db.Entry(beerType).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +58,7 @@ namespace BeerWebApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TypeExists(id))
+                if (!BeerTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -71,35 +71,35 @@ namespace BeerWebApi.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Types
-        [ResponseType(typeof(Models.Type))]
-        public async Task<IHttpActionResult> PostType(Models.Type type)
+        // POST: api/BeerTypes
+        [ResponseType(typeof(BeerType))]
+        public async Task<IHttpActionResult> PostBeerType(BeerType beerType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Types.Add(type);
+            db.BeerTypes.Add(beerType);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = type.Id }, type);
+            return CreatedAtRoute("DefaultApi", new { id = beerType.Id }, beerType);
         }
 
-        // DELETE: api/Types/5
-        [ResponseType(typeof(Models.Type))]
-        public async Task<IHttpActionResult> DeleteType(int id)
+        // DELETE: api/BeerTypes/5
+        [ResponseType(typeof(BeerType))]
+        public async Task<IHttpActionResult> DeleteBeerType(int id)
         {
-            Models.Type type = await db.Types.FindAsync(id);
-            if (type == null)
+            BeerType beerType = await db.BeerTypes.FindAsync(id);
+            if (beerType == null)
             {
                 return NotFound();
             }
 
-            db.Types.Remove(type);
+            db.BeerTypes.Remove(beerType);
             await db.SaveChangesAsync();
 
-            return Ok(type);
+            return Ok(beerType);
         }
 
         protected override void Dispose(bool disposing)
@@ -111,9 +111,9 @@ namespace BeerWebApi.Controllers
             base.Dispose(disposing);
         }
 
-        private bool TypeExists(int id)
+        private bool BeerTypeExists(int id)
         {
-            return db.Types.Count(e => e.Id == id) > 0;
+            return db.BeerTypes.Count(e => e.Id == id) > 0;
         }
     }
 }

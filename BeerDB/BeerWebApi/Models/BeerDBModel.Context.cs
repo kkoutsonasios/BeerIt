@@ -26,8 +26,8 @@ namespace BeerWebApi.Models
         }
     
         public virtual DbSet<Beer> Beers { get; set; }
-        public virtual DbSet<Type> Types { get; set; }
-        public virtual DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<BeerType> BeerTypes { get; set; }
+        public virtual DbSet<BeerRating> BeerRatings { get; set; }
         public virtual DbSet<PresentableBeer> PresentableBeers { get; set; }
     }
 }

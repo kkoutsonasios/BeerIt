@@ -7,6 +7,11 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BeerDB", "BeerDB\BeerDB.sql
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerWebApi", "BeerWebApi\BeerWebApi.csproj", "{E40367FA-6E44-4F39-9A93-3F51EB3D8487}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9479D986-402C-4682-93F2-F578DF942878}"
+	ProjectSection(SolutionItems) = preProject
+		TestPage.html = TestPage.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

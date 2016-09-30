@@ -13,44 +13,44 @@ using BeerWebApi.Models;
 
 namespace BeerWebApi.Controllers
 {
-    public class RatingsController : ApiController
+    public class BeerRatingsController : ApiController
     {
         private BeerDBEntities db = new BeerDBEntities();
 
-        // GET: api/Ratings
-        public IQueryable<Rating> GetRatings()
+        // GET: api/BeerRatings
+        public IQueryable<BeerRating> GetBeerRatings()
         {
-            return db.Ratings;
+            return db.BeerRatings;
         }
 
-        // GET: api/Ratings/5
-        [ResponseType(typeof(Rating))]
-        public async Task<IHttpActionResult> GetRating(int id)
+        // GET: api/BeerRatings/5
+        [ResponseType(typeof(BeerRating))]
+        public async Task<IHttpActionResult> GetBeerRating(int id)
         {
-            Rating rating = await db.Ratings.FindAsync(id);
-            if (rating == null)
+            BeerRating beerRating = await db.BeerRatings.FindAsync(id);
+            if (beerRating == null)
             {
                 return NotFound();
             }
 
-            return Ok(rating);
+            return Ok(beerRating);
         }
 
-        // PUT: api/Ratings/5
+        // PUT: api/BeerRatings/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRating(int id, Rating rating)
+        public async Task<IHttpActionResult> PutBeerRating(int id, BeerRating beerRating)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != rating.BeerId)
+            if (id != beerRating.BeerId)
             {
                 return BadRequest();
             }
 
-            db.Entry(rating).State = EntityState.Modified;
+            db.Entry(beerRating).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +58,7 @@ namespace BeerWebApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RatingExists(id))
+                if (!BeerRatingExists(id))
                 {
                     return NotFound();
                 }
@@ -71,16 +71,16 @@ namespace BeerWebApi.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Ratings
-        [ResponseType(typeof(Rating))]
-        public async Task<IHttpActionResult> PostRating(Rating rating)
+        // POST: api/BeerRatings
+        [ResponseType(typeof(BeerRating))]
+        public async Task<IHttpActionResult> PostBeerRating(BeerRating beerRating)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Ratings.Add(rating);
+            db.BeerRatings.Add(beerRating);
 
             try
             {
@@ -88,7 +88,7 @@ namespace BeerWebApi.Controllers
             }
             catch (DbUpdateException)
             {
-                if (RatingExists(rating.BeerId))
+                if (BeerRatingExists(beerRating.BeerId))
                 {
                     return Conflict();
                 }
@@ -98,23 +98,23 @@ namespace BeerWebApi.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = rating.BeerId }, rating);
+            return CreatedAtRoute("DefaultApi", new { id = beerRating.BeerId }, beerRating);
         }
 
-        // DELETE: api/Ratings/5
-        [ResponseType(typeof(Rating))]
-        public async Task<IHttpActionResult> DeleteRating(int id)
+        // DELETE: api/BeerRatings/5
+        [ResponseType(typeof(BeerRating))]
+        public async Task<IHttpActionResult> DeleteBeerRating(int id)
         {
-            Rating rating = await db.Ratings.FindAsync(id);
-            if (rating == null)
+            BeerRating beerRating = await db.BeerRatings.FindAsync(id);
+            if (beerRating == null)
             {
                 return NotFound();
             }
 
-            db.Ratings.Remove(rating);
+            db.BeerRatings.Remove(beerRating);
             await db.SaveChangesAsync();
 
-            return Ok(rating);
+            return Ok(beerRating);
         }
 
         protected override void Dispose(bool disposing)
@@ -126,9 +126,9 @@ namespace BeerWebApi.Controllers
             base.Dispose(disposing);
         }
 
-        private bool RatingExists(int id)
+        private bool BeerRatingExists(int id)
         {
-            return db.Ratings.Count(e => e.BeerId == id) > 0;
+            return db.BeerRatings.Count(e => e.BeerId == id) > 0;
         }
     }
 }

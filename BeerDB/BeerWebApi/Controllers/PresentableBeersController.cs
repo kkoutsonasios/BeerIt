@@ -45,7 +45,7 @@ namespace BeerWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != presentableBeer.Id)
+            if (id != presentableBeer.BeerId)
             {
                 return BadRequest();
             }
@@ -88,7 +88,7 @@ namespace BeerWebApi.Controllers
             }
             catch (DbUpdateException)
             {
-                if (PresentableBeerExists(presentableBeer.Id))
+                if (PresentableBeerExists(presentableBeer.BeerId))
                 {
                     return Conflict();
                 }
@@ -98,7 +98,7 @@ namespace BeerWebApi.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = presentableBeer.Id }, presentableBeer);
+            return CreatedAtRoute("DefaultApi", new { id = presentableBeer.BeerId }, presentableBeer);
         }
 
         // DELETE: api/PresentableBeers/5
@@ -128,7 +128,7 @@ namespace BeerWebApi.Controllers
 
         private bool PresentableBeerExists(int id)
         {
-            return db.PresentableBeers.Count(e => e.Id == id) > 0;
+            return db.PresentableBeers.Count(e => e.BeerId == id) > 0;
         }
     }
 }
