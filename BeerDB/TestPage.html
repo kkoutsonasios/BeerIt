@@ -1,4 +1,4 @@
-﻿
+﻿<!--chrome.exe --user-data-dir="C:\Users\konstank\Source" --disable-web-security-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -20,62 +20,89 @@
 </head>
 <body>
     <div class="container">
-        
-        <div data-bind="with: ResultObject">
-            <table class="table" data-bind="visible: Response">
-                <tbody data-bind="foreach: Search">
+        <div>
+            <div data-bind="with: Beer">
+                <p>Name</p>
+                <input data-bind="value: BeerName" /></input>
+                <p>Type</p>
+                <input data-bind="value: BeerType" /></input>
+                <p>Rating</p>
+                <input data-bind="value: BeerRating" /></input>
+            </div>
+            <button data-bind="click: SaveBeer">SaveBeer</button>
+        </div>
+        <button data-bind="click: GetAllBeers">GetAllBeers</button>
+            <table>
+                <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
+                <tbody data-bind="foreach: AllBeers">
                     <tr>
-                        <td> <h2 data-bind="text: Title"></h2></td>
-                        <td><img data-bind="attr:{src: Poster}, visible: (Poster != 'N/A')" style="max-height:150px; max-width:100px"></img></td>
-                        </td>
+                        <td><p data-bind="text: BeerId"></p></td>
+                        <td><p data-bind="text: BeerName"></p></td>
+                        <td><p data-bind="text: BeerTypeName"></p></</td>
+                        <td><p data-bind="text: BeerRating"></p></</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div data-bind="visible: !Response" style="margin:50px" class="alert alert-danger" role="alert">Nothing found!</div>
-        </div>
+        <input data-bind="value: SearchText"></input>
+        <button data-bind="click: SearchBeer">SearchBeers</button>
 
+        <table>
+            <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
+            <tbody data-bind="foreach: SearchBeers">
+                <tr>
+                    <td><p data-bind="text: BeerId"></p></td>
+                    <td><p data-bind="text: BeerName"></p></td>
+                    <td><p data-bind="text: BeerTypeName"></p></</td>
+                    <td><p data-bind="text: BeerRating"></p></</td>
+                </tr>
+            </tbody>
+        </table>
         
         <script type="text/javascript">
 
-			function MovieItViewModel()
+            function BeerClass(BeerName, BeerType) {
+                var self = this;
+                self.BeerName = BeerName;
+                self.BeerType = BeerType;
+                self.BeerRating = null;
+            };
+
+			function BeerItViewModel()
 			{
-				var self = this;
-				self.SearchText = ko.observable();
-				self.ResultObject = ko.observable();
-				self.SelectedMovie = ko.observable();
+			    var WebApiUri = "http://localhost:51325";
+			    var self = this;
+			    self.SearchText = ko.observable();
+			    self.AllBeers = ko.observable();
+			    self.SearchBeers = ko.observable();
+			    self.Beer = ko.observable();
 
-				self.SearchWithEnter = function(data , event)
+			    self.Beer = new BeerClass('Chimay','grand cru');
+                
+				self.GetAllBeers = function()
 				{
-					if (event.which == 13)
-					{
-						self.searchResults();
-					}
+				    $.get(WebApiUri +"/api/Beers/GetAll", null, self.AllBeers);
 				};
 
-				self.goHome = function()
+				self.SearchBeer = function ()
 				{
-					self.SearchText(null);
-					self.ResultObject(null);
-					self.SelectedMovie(null);
+				    $.get(WebApiUri + "/api/Beers/Search/" + self.SearchText(), null, self.SearchBeers);
 				};
 
-				self.goToMovie = function(Movie)
+				self.SaveBeer = function () 
 				{
-					self.ResultObject(null);
-					$.get("http://www.omdbapi.com/", { t: Movie.Title, plot: "full", r: "json" }, self.SelectedMovie);
-				};
-
-				self.searchResults = function()
-				{
-					self.ResultObject(null);
-					self.SelectedMovie(null);
-					if(self.SearchText != null)
-						$.get("http://www.omdbapi.com/", { s: self.SearchText, r: "json", type: "movie" }, self.ResultObject);
+				    $.ajax(WebApiUri + "/api/Beers/Save/", 
+                    {
+				        data: ko.toJSON( self.Beer ),
+				        type: "post", contentType: "application/json",
+				        success: function (result) { alert(result) }
+				    });
 				};
 			};
 
-			ko.applyBindings(new MovieItViewModel());
+
+
+			ko.applyBindings(new BeerItViewModel());
         </script>
     </div>
 </body>

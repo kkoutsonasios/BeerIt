@@ -14,6 +14,7 @@ namespace BeerWebApi.Models
     
     public partial class BeerRating
     {
+        public int Id { get; set; }
         public int BeerId { get; set; }
         public int Rating { get; set; }
     }

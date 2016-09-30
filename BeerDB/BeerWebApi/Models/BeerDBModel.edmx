@@ -13,13 +13,11 @@
           <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="TypeId" Type="int" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'BeerDB.dbo.BeerRating' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BeerRating">
           <Key>
-            <PropertyRef Name="BeerId" />
-            <PropertyRef Name="Rating" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BeerId" Type="int" Nullable="false" />
           <Property Name="Rating" Type="int" Nullable="false" />
         </EntityType>
@@ -35,14 +33,14 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
         <EntityType Name="PresentableBeer">
           <Key>
             <PropertyRef Name="BeerId" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="TypeId" />
-            <PropertyRef Name="BeerType" />
+            <PropertyRef Name="BeerName" />
+            <PropertyRef Name="BeerTypeId" />
+            <PropertyRef Name="BeerTypeName" />
           </Key>
           <Property Name="BeerId" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="TypeId" Type="int" Nullable="false" />
-          <Property Name="BeerType" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="BeerName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="BeerTypeId" Type="int" Nullable="false" />
+          <Property Name="BeerTypeName" Type="nchar" MaxLength="10" Nullable="false" />
           <Property Name="BeerRating" Type="int" />
         </EntityType>
         <Association Name="FK_Beer_Type">
@@ -71,19 +69,14 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
         </Association>
         <EntityContainer Name="BeerDBModelStoreContainer">
           <EntitySet Name="Beer" EntityType="Self.Beer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BeerRating" EntityType="Self.BeerRating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BeerType" EntityType="Self.BeerType" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="BeerRating" EntityType="Self.BeerRating" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [BeerRating].[BeerId] AS [BeerId], 
-    [BeerRating].[Rating] AS [Rating]
-    FROM [dbo].[BeerRating] AS [BeerRating]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="PresentableBeer" EntityType="Self.PresentableBeer" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [PresentableBeer].[BeerId] AS [BeerId], 
-    [PresentableBeer].[Name] AS [Name], 
-    [PresentableBeer].[TypeId] AS [TypeId], 
-    [PresentableBeer].[BeerType] AS [BeerType], 
+    [PresentableBeer].[BeerName] AS [BeerName], 
+    [PresentableBeer].[BeerTypeId] AS [BeerTypeId], 
+    [PresentableBeer].[BeerTypeName] AS [BeerTypeName], 
     [PresentableBeer].[BeerRating] AS [BeerRating]
     FROM [dbo].[PresentableBeer] AS [PresentableBeer]</DefiningQuery>
           </EntitySet>
@@ -102,8 +95,8 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
       <Schema Namespace="BeerDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="BeerDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Beers" EntityType="BeerDBModel.Beer" />
-          <EntitySet Name="BeerTypes" EntityType="BeerDBModel.BeerType" />
           <EntitySet Name="BeerRatings" EntityType="BeerDBModel.BeerRating" />
+          <EntitySet Name="BeerTypes" EntityType="BeerDBModel.BeerType" />
           <EntitySet Name="PresentableBeers" EntityType="BeerDBModel.PresentableBeer" />
           <AssociationSet Name="FK_Beer_Type" Association="BeerDBModel.FK_Beer_Type">
             <End Role="BeerType" EntitySet="BeerTypes" />
@@ -122,7 +115,14 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
           <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="TypeId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="BeerType" Relationship="BeerDBModel.FK_Beer_Type" FromRole="Beer" ToRole="BeerType" />
-          <NavigationProperty Name="BeerRatings" Relationship="BeerDBModel.FK_BeerRating_Beer" FromRole="Beer" ToRole="BeerRating" />
+        </EntityType>
+        <EntityType Name="BeerRating">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BeerId" Type="Int32" Nullable="false" />
+          <Property Name="Rating" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="BeerType">
           <Key>
@@ -130,26 +130,19 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
-        </EntityType>
-        <EntityType Name="BeerRating">
-          <Key>
-            <PropertyRef Name="BeerId" />
-            <PropertyRef Name="Rating" />
-          </Key>
-          <Property Name="BeerId" Type="Int32" Nullable="false" />
-          <Property Name="Rating" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Beers" Relationship="BeerDBModel.FK_Beer_Type" FromRole="BeerType" ToRole="Beer" />
         </EntityType>
         <EntityType Name="PresentableBeer">
           <Key>
             <PropertyRef Name="BeerId" />
-            <PropertyRef Name="Name" />
-            <PropertyRef Name="TypeId" />
-            <PropertyRef Name="BeerType" />
+            <PropertyRef Name="BeerName" />
+            <PropertyRef Name="BeerTypeId" />
+            <PropertyRef Name="BeerTypeName" />
           </Key>
           <Property Name="BeerId" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="TypeId" Type="Int32" Nullable="false" />
-          <Property Name="BeerType" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="BeerName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="BeerTypeId" Type="Int32" Nullable="false" />
+          <Property Name="BeerTypeName" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="BeerRating" Type="Int32" />
         </EntityType>
         <Association Name="FK_Beer_Type">
@@ -191,6 +184,15 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="BeerRatings">
+            <EntityTypeMapping TypeName="BeerDBModel.BeerRating">
+              <MappingFragment StoreEntitySet="BeerRating">
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="BeerId" ColumnName="BeerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="BeerTypes">
             <EntityTypeMapping TypeName="BeerDBModel.BeerType">
               <MappingFragment StoreEntitySet="BeerType">
@@ -199,21 +201,13 @@ warning 6002: The table/view 'BeerDB.dbo.PresentableBeer' does not have a primar
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="BeerRatings">
-            <EntityTypeMapping TypeName="BeerDBModel.BeerRating">
-              <MappingFragment StoreEntitySet="BeerRating">
-                <ScalarProperty Name="Rating" ColumnName="Rating" />
-                <ScalarProperty Name="BeerId" ColumnName="BeerId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PresentableBeers">
             <EntityTypeMapping TypeName="BeerDBModel.PresentableBeer">
               <MappingFragment StoreEntitySet="PresentableBeer">
                 <ScalarProperty Name="BeerRating" ColumnName="BeerRating" />
-                <ScalarProperty Name="BeerType" ColumnName="BeerType" />
-                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="BeerTypeName" ColumnName="BeerTypeName" />
+                <ScalarProperty Name="BeerTypeId" ColumnName="BeerTypeId" />
+                <ScalarProperty Name="BeerName" ColumnName="BeerName" />
                 <ScalarProperty Name="BeerId" ColumnName="BeerId" />
               </MappingFragment>
             </EntityTypeMapping>

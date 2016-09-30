@@ -17,103 +17,89 @@ namespace BeerWebApi.Controllers
     {
         private BeerDBEntities db = new BeerDBEntities();
 
-        // GET: api/Beers
-        public IQueryable<Beer> GetBeers()
+        [HttpGet]
+        [ActionName("Search")]
+        public IQueryable<PresentableBeer> SearchBeers(string args)
         {
-            return db.Beers;
+            return (from x in db.PresentableBeers where x.BeerName.Contains(args) select x);
         }
 
-        // GET: api/Beers/5
-        [ResponseType(typeof(Beer))]
-        public async Task<IHttpActionResult> GetBeer(int id)
+        [HttpGet]
+        [ActionName("GetAll")]
+        public IQueryable<PresentableBeer> GetAll()
         {
-            Beer beer = await db.Beers.FindAsync(id);
-            if (beer == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(beer);
+            return db.PresentableBeers;
         }
 
-        // PUT: api/Beers/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutBeer(int id, Beer beer)
+        [HttpPost]
+        [ActionName("Save")]
+        public async Task<IHttpActionResult> PostBeer(BeerDTO args)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            Beer beer;
 
-            if (id != beer.Id)
-            {
-                return BadRequest();
-            }
+            //check if beer exist
+            beer = await (from x in db.Beers where x.Name == args.BeerName select x).FirstOrDefaultAsync();
 
-            db.Entry(beer).State = EntityState.Modified;
-
-            try
+            if (beer != null)
             {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BeerExists(id))
+                //if beer exists and BeerDTO has rating update its rating
+                if (args.BeerRating.HasValue)
                 {
-                    return NotFound();
+                    BeerRating beerRating = new BeerRating() { BeerId = beer.Id, Rating = args.BeerRating.GetValueOrDefault() };
+                    db.BeerRatings.Add(beerRating);
                 }
                 else
                 {
-                    throw;
+                    //Can't insert a beer that already exists
+                    return BadRequest("Can't insert a beer that already exists");
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/Beers
-        [ResponseType(typeof(Beer))]
-        public async Task<IHttpActionResult> PostBeer(Beer beer)
-        {
-            if (!ModelState.IsValid)
+            else
             {
-                return BadRequest(ModelState);
-            }
+                BeerType beerType;
 
-            db.Beers.Add(beer);
+                //check if type exists, if exists assign it to the beer
+                beerType = await (from x in db.BeerTypes where x.Name == args.BeerType select x).FirstOrDefaultAsync();
+
+                //else create it
+                if (beerType == null)
+                {
+                    beerType = new BeerType() { Name = args.BeerType };
+                    db.BeerTypes.Add(beerType);
+                }
+
+                beer = new Beer() { Name = args.BeerName, TypeId = beerType.Id };
+
+                //insert the new beer
+                db.Beers.Add(beer);
+
+                if (args.BeerRating.HasValue)
+                {
+                    BeerRating beerRating = new BeerRating() { BeerId = beer.Id, Rating = args.BeerRating.GetValueOrDefault() };
+                    db.BeerRatings.Add(beerRating);
+                }
+            }
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = beer.Id }, beer);
+            return Ok("Good");
         }
 
-        // DELETE: api/Beers/5
-        [ResponseType(typeof(Beer))]
-        public async Task<IHttpActionResult> DeleteBeer(int id)
+        [HttpPut]
+        [ActionName("Rate")]
+        public async Task<IHttpActionResult> RateByName(BeerRatingDTO args)
         {
-            Beer beer = await db.Beers.FindAsync(id);
-            if (beer == null)
+            int BeerId = (from x in db.PresentableBeers where x.BeerName == args.BeerName select x.BeerId).FirstOrDefault();
+
+            if (BeerId > 0)
             {
-                return NotFound();
+                db.BeerRatings.Add(new BeerRating() { BeerId = BeerId, Rating = args.BeerRating });
+                await db.SaveChangesAsync();
+                return Ok("Good");
             }
-
-            db.Beers.Remove(beer);
-            await db.SaveChangesAsync();
-
-            return Ok(beer);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            else
             {
-                db.Dispose();
+                return BadRequest("Beer not found!");
             }
-            base.Dispose(disposing);
-        }
-
-        private bool BeerExists(int id)
-        {
-            return db.Beers.Count(e => e.Id == id) > 0;
         }
     }
 }

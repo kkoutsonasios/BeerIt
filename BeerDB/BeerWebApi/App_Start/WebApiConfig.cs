@@ -23,10 +23,17 @@ namespace BeerWebApi
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+                                name: "ActionApi",
+                                routeTemplate: "api/{controller}/{action}/{args}",
+                                defaults: new { args = RouteParameter.Optional}
+                         );
+
+            /*
+            config.Routes.MapHttpRoute(
+                            name: "DefaultApi",
+                            routeTemplate: "api/{controller}/{id}",
+                            defaults: new { id = RouteParameter.Optional }
+                        );*/
         }
     }
 }
