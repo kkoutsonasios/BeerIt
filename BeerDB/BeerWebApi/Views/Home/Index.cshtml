@@ -7,68 +7,71 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
     <style>
-        body {
-            max-width ="800px";
-            min-width ="400px";
-        }
-
-        .container {
-            width: 100%;
-            margin-top: 50px;
+        .btn-default {
+            border-color: blue;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div>
+    <div >
+        <div style="margin-bottom:20px; border:double;">
             <div data-bind="with: BeerRating">
                 <p>Name</p>
-                <input data-bind="value: BeerName" /></input>
+                <input type="text" class="form-control" data-bind="value: BeerName" /></input>
                 <p>Rating</p>
-                <input data-bind="value: BeerRating" /></input>
+                <input type="text" class="form-control" data-bind="value: BeerRating" /></input>
             </div>
-            <button data-bind="click: UpdateBeerByName">RateBeer</button>
+            <button class="btn btn-default" type="button" data-bind="click: UpdateBeerByName">RateBeer</button>
         </div>
 
-        <div>
+        <div style="margin-bottom:20px; border:double;">
             <div data-bind="with: Beer">
                 <p>Name</p>
-                <input data-bind="value: BeerName" /></input>
+                <input type="text" class="form-control" data-bind="value: BeerName" /></input>
                 <p>Type</p>
-                <input data-bind="value: BeerType" /></input>
+                <input type="text" class="form-control" data-bind="value: BeerType" /></input>
                 <p>Rating</p>
-                <input data-bind="value: BeerRating" /></input>
+                <input type="text" class="form-control" data-bind="value: BeerRating" /></input>
             </div>
-            <button data-bind="click: SaveBeer">SaveBeer</button>
+            <button class="btn btn-default" type="button" data-bind="click: SaveBeer">SaveBeer</button>
         </div>
 
-        <button data-bind="click: GetAllBeers">GetAllBeers</button>
-        <table>
-            <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
-            <tbody data-bind="foreach: AllBeers">
-                <tr>
-                    <td><p data-bind="text: BeerId"></p></td>
-                    <td><p data-bind="text: BeerName"></p></td>
-                    <td><p data-bind="text: BeerTypeName"></p></</td>
-                    <td><p data-bind="text: BeerRating"></p></</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="margin-bottom:20px; border:double;">
+            <button class="btn btn-default" type="button" data-bind="click: GetAllBeers">GetAllBeers</button>
+            <table class="table">
+                <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
+                <tbody data-bind="foreach: AllBeers">
+                    <tr>
+                        <td><p data-bind="text: BeerId"></p></td>
+                        <td><p data-bind="text: BeerName"></p></td>
+                        <td><p data-bind="text: BeerTypeName"></p></</td>
+                        <td><p data-bind="text: BeerRating"></p></</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
 
-        <input data-bind="value: SearchText"></input>
-        <button data-bind="click: SearchBeer">SearchBeers</button>
+        <div style="margin-bottom:20px; border:double;">
+            <div class="row">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for Beers" data-bind="value: SearchText" /></input>
+                    <span class="input-group-btn"><button class="btn btn-default" type="button" data-bind="click: SearchBeer">Search</button></span>
+                </div>
+            </div>
 
-        <table>
-            <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
-            <tbody data-bind="foreach: SearchBeers">
-                <tr>
-                    <td><p data-bind="text: BeerId"></p></td>
-                    <td><p data-bind="text: BeerName"></p></td>
-                    <td><p data-bind="text: BeerTypeName"></p></</td>
-                    <td><p data-bind="text: BeerRating"></p></</td>
-                </tr>
-            </tbody>
-        </table>
+            <table class="table">
+                <thead><tr><td>Id:</td><td>Name:</td><td>Type:</td><td>Rating:</td></tr></thead>
+                <tbody data-bind="foreach: SearchBeers">
+                    <tr>
+                        <td><p data-bind="text: BeerId"></p></td>
+                        <td><p data-bind="text: BeerName"></p></td>
+                        <td><p data-bind="text: BeerTypeName"></p></</td>
+                        <td><p data-bind="text: BeerRating"></p></</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <script type="text/javascript">
 
@@ -103,11 +106,13 @@
 
 				self.GetAllBeers = function()
 				{
+				    self.AllBeers(null);
 				    $.get(WebApiUri +"/api/Beers/GetAll", null, self.AllBeers);
 				};
 
 				self.SearchBeer = function ()
 				{
+				    self.SearchBeers(null);
 				    $.get(WebApiUri + "/api/Beers/Search/" + self.SearchText(), null, self.SearchBeers);
 				};
 
